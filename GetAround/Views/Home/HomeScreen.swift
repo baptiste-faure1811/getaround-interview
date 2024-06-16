@@ -14,16 +14,16 @@ struct HomeScreen: View {
         ScrollView {
             LazyVStack(spacing: DesignSystem.spacing) {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 270), alignment: .top)], spacing: DesignSystem.spacing, pinnedViews: [.sectionHeaders]) {
-                    Section(content: {
+                    Section {
                         ForEach(self.viewModel.cars) { car in
                             AppRouter.Link(value: .carDetails(car: car, numberOfDays: viewModel.selectedNumberOfDays)) {
                                 CarCardWrapper(car: car, numberOfDays: viewModel.selectedNumberOfDays)
                             }
                         }
-                    }, header: {
+                    } header: {
                         DaysSelector(numberOfDays: $viewModel.selectedNumberOfDays.animation())
                             .frame(maxWidth: 400, alignment: .center)
-                    })
+                    }
                 }
                 if viewModel.cars.isEmpty, !viewModel.isFetchingCars, viewModel.fetchError == nil {
                     EmptyOverlay(retryAction: viewModel.loadCars)

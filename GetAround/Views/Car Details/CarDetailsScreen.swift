@@ -19,6 +19,13 @@ import SwiftUILayoutGuides
 struct CarDetailsScreen: View {
     public let car: Car
     public let numberOfDays: Int
+
+    @AppStorage(Constants.UserdefaultsFavoriteCarsKey) private var favoriteCars: [Car] = []
+
+    var isFavorite: Bool {
+        return favoriteCars.contains(car)
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: DesignSystem.spacing) {
@@ -36,7 +43,15 @@ struct CarDetailsScreen: View {
             .fitToReadableContentWidth(alignment: .center)
         }
         .background(.background100)
-        .navigationTitle(car.name)
-        .navigationBarTitleDisplayMode(.large)
+        .toolbar(content: {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: { favoriteCars.toggle(element: car) }, label: {
+                    Image(systemName: isFavorite ? "heart.fill" : "heart")
+                        .foregroundStyle(.accent)
+                })
+                .sensoryFeedback(.impact(weight: .medium), trigger: favoriteCars)
+                .accessibilityLabel(Text(isFavorite ? "Remove from Favorites" : "Add to Favorites"))
+            }
+        })
     }
 }

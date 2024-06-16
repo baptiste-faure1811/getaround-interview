@@ -83,9 +83,8 @@ private struct OwnerAvatar: View {
                 .aspectRatio(DesignSystem.imageAspectRatio, contentMode: .fill)
                 .frame(width: size, height: size)
 
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.body)
-                .foregroundStyle(.orange.gradient.opacity(0.7))
+            Image(systemName: "person")
+                .font(.title2)
         }
     }
 

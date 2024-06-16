@@ -8,6 +8,15 @@
 import Observation
 import SwiftUI
 
+/*
+
+ This AppRouter is not very useful in the case of this app. I am using it in one of my other apps.
+ I chose to use it only to showcase what I would do to manage navigation in a bigger app.
+ When using UIKit, I like to use the Coordinator pattern, this AppRouter allows to get closer to that concept, event though not ideal.
+ This allows to retrieve a `path` var using environment to have programatic navigation and typed destinations
+
+ */
+
 @Observable
 final class AppRouter {
     var path: NavigationPath = .init()

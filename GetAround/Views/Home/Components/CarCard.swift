@@ -10,17 +10,49 @@ import SwiftUI
 struct CarCardWrapper: View {
     public let car: Car
     public let numberOfDays: Int
+
+    @AppStorage(Constants.UserdefaultsFavoriteCarsKey) private var favoriteCars: [Car] = []
+
+    var isFavorite: Bool {
+        return favoriteCars.contains(car)
+    }
+
     var body: some View {
-        Card(spacing: 8, cornerRadius: DesignSystem.CardCornerRadius.large, padding: DesignSystem.CardPadding.large) {
-            CarImage(url: car.picture, cornerRadius: DesignSystem.CardCornerRadius.large - DesignSystem.CardPadding.large)
-            
-            CarCardInfo(car: car, numberOfDays: numberOfDays)
-                .padding(.horizontal, 3)
+        ZStack(alignment: .topTrailing) {
+            Card(spacing: 8, cornerRadius: DesignSystem.CardCornerRadius.large, padding: DesignSystem.CardPadding.large) {
+                CarImage(url: car.picture, cornerRadius: DesignSystem.CardCornerRadius.large - DesignSystem.CardPadding.large)
+
+                CarCardInfo(car: car, numberOfDays: numberOfDays)
+                    .padding(.horizontal, 3)
+            }
+
+            Button(action: { favoriteCars.toggle(element: car) }, label: {
+                Image(systemName: "heart.fill")
+                    .font(.title2)
+                    .foregroundStyle(favoriteCars.contains(car) ? .accent : .white)
+                    .shadow(radius: 6)
+                    .padding(6)
+                    .padding(.top, 14)
+                    .padding(.trailing, 14)
+            })
+            .sensoryFeedback(.impact(weight: .medium), trigger: favoriteCars)
+            .accessibilityLabel(Text(isFavorite ? "Remove from Favorites" : "Add to Favorites"))
+        }
+        .contextMenu {
+            if isFavorite {
+                Button(role: .destructive) { favoriteCars.toggle(element: car) } label: {
+                    Label("Remove from Favorites", systemImage: "heart.slash")
+                }
+            } else {
+                Button { favoriteCars.toggle(element: car) } label: {
+                    Label("Add to Favorites", systemImage: "heart")
+                }
+            }
         }
     }
 }
 
-fileprivate struct CarCardInfo: View {
+private struct CarCardInfo: View {
     public let car: Car
     public let numberOfDays: Int
     var body: some View {
@@ -73,7 +105,7 @@ fileprivate struct CarCardInfo: View {
     }
 }
 
-fileprivate struct CarRating: View {
+private struct CarRating: View {
     public let rating: Rating
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: 4) {
