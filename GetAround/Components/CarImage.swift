@@ -1,5 +1,5 @@
 //
-//  CarCardImage.swift
+//  CarImage.swift
 //  GetAround
 //
 //  Created by Baptiste Faure on 13/06/2024.
@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct CarCardImage: View {
+struct CarImage: View {
     public let url: URL?
-    private let cornerRadius: CGFloat = DesignSystem.cornerRadius - DesignSystem.cardPadding
+    public let cornerRadius: CGFloat
     var body: some View {
         AsyncImage(url: url) { phase in
             if let image = phase.image {

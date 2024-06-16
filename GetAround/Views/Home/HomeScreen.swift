@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SwiftUIGIF
 
 struct HomeScreen: View {
     @State private var viewModel: HomeViewModel = .init()
@@ -14,13 +13,12 @@ struct HomeScreen: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: DesignSystem.spacing) {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 270), alignment: .top)],
-                          spacing: DesignSystem.spacing, 
-                          pinnedViews: [.sectionHeaders])
-                {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 270), alignment: .top)], spacing: DesignSystem.spacing, pinnedViews: [.sectionHeaders]) {
                     Section(content: {
                         ForEach(self.viewModel.cars) { car in
-                            CarCardView(car: car, numberOfDays: viewModel.selectedNumberOfDays)
+                            AppRouter.Link(value: .carDetails(car: car, numberOfDays: viewModel.selectedNumberOfDays)) {
+                                CarCardWrapper(car: car, numberOfDays: viewModel.selectedNumberOfDays)
+                            }
                         }
                     }, header: {
                         DaysSelector(numberOfDays: $viewModel.selectedNumberOfDays.animation())
@@ -40,6 +38,7 @@ struct HomeScreen: View {
             .padding(.horizontal, DesignSystem.spacing)
             .padding(.bottom, DesignSystem.spacing)
         }
+        .background(.background100)
         .toolbar {
             ToolbarItem(placement: .navigation) {
                 GetaroundToolBar()
@@ -48,111 +47,14 @@ struct HomeScreen: View {
         .safeAreaPadding(.top)
         .errorAlert(error: $viewModel.fetchError)
         .refreshable {
+            // Realod cars on refresh
             await self.viewModel.loadCars()
         }
-        .task {
+        // Using a custom view modifier otherwise the task is triggered when poping back from detail view.
+        .onFirstAppearTask {
             await self.viewModel.loadCars()
         }
-        .animation(.default, value: viewModel.cars)
-    }
-}
-
-private struct GetaroundToolBar: View {
-    var body: some View {
-        HStack(alignment: .center, spacing: 8) {
-            Image(.roundedAppIcon)
-                .resizable()
-                .frame(width: 26, height: 26)
-            Text(Constants.AppName)
-                .font(.title)
-                .fontWeight(.bold)
-        }
-    }
-}
-
-private struct DaysSelector: View {
-    @Binding public var numberOfDays: Int
-    var body: some View {
-        Card(spacing: 0) {
-            Group {
-                Text("Showing prices for:")
-                    .font(.subheadline)
-                    .foregroundStyle(.secondary)
-                    .fontWeight(.medium)
-
-                // Using the iOS 17 'Grammar Agreement' to automatically handle plurals.
-                // 'day' needs to be string interpolated.
-                // See: https://www.hackingwithswift.com/forums/swiftui/odd-log-message-caused-by-automatic-grammar-agreement/20614
-                Stepper("^[\(numberOfDays) \("day")](inflect: true)",
-                        value: $numberOfDays.animation(),
-                        in: 1 ... 31,
-                        step: 1)
-                    .font(.title3)
-                    .fontWeight(.semibold)
-                    .sensoryFeedback(.increase, trigger: numberOfDays)
-            }
-            .animation(.spring, value: numberOfDays)
-            .contentTransition(.numericText())
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
-        }
-    }
-}
-
-private struct LoadingOverlay: View {
-    var body: some View {
-        ContentUnavailableView {
-            Label(title: {
-                Text("Searching cars ...")
-            }, icon: {
-                GIFImage(name: "car-loading")
-                    .frame(height: 56)
-            })
-        } description: {
-            Text("We're searching available cars around you")
-        }
-    }
-}
-
-private struct EmptyOverlay: View {
-    public let retryAction: () async -> Void
-    var body: some View {
-        ContentUnavailableView(label: {
-            Label("No Cars Available", systemImage: "car.2")
-        }, description: {
-            Text("We couldn't find any cars around you.")
-        }, actions: {
-            Button {
-                Task(priority: .userInitiated) {
-                    await retryAction()
-                }
-            } label: {
-                Text("Reload")
-            }
-            .buttonStyle(.bordered)
-            .tint(.accent)
-        })
-    }
-}
-
-private struct ErrorOverlay: View {
-    public let localizedError: LocalizedError
-    public let retryAction: () async -> Void
-    var body: some View {
-        ContentUnavailableView(label: {
-            Label(localizedError.errorDescription ?? "An error occured", systemImage: "exclamationmark.triangle")
-        }, description: {
-            Text(localizedError.recoverySuggestion ?? "")
-        }, actions: {
-            Button {
-                Task(priority: .userInitiated) {
-                    await retryAction()
-                }
-            } label: {
-                Text("Reload")
-            }
-            .buttonStyle(.bordered)
-            .tint(.accent)
-        })
+        // Animates overlays appearance and disappearance.
+        .animation(.spring, value: viewModel.cars)
     }
 }

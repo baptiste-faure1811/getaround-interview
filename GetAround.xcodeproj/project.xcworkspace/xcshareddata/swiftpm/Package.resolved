@@ -1,5 +1,5 @@
 {
-  "originHash" : "b59b06308765f2454138612368b8a4dd24bca080149e4baf1b7c85ad581365c0",
+  "originHash" : "0df138d0a8a20d14a6945b9c777e6edcaa88d7ae28411b0452c1a31178cdb3ee",
   "pins" : [
     {
       "identity" : "swiftui-gif",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "471d37db548e79bdd62e7702dbceaf28ea1103f9",
         "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "swiftui-layout-guides",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/tgrapperon/swiftui-layout-guides",
+      "state" : {
+        "revision" : "f24d46751703b74463127dfa88e62928e9cf5420",
+        "version" : "0.1.0"
       }
     }
   ],

@@ -1,8 +1,16 @@
+
+
 # Technical Interview App
 
 This file explains my choices for the app I developed for the technical interview. There is one commit per level as requested.
 
 Comments in the code explain some of my choices.
+
+## Levels
+
+- Level One: HomeScreen
+- Level Two: AppRouter and navigation to details screen, reorganization of UI components
+
 
 ## Localization
 - The app is not localized and all strings are hardcoded in English.
@@ -23,6 +31,7 @@ Comments in the code explain some of my choices.
 
 ## Libraries Used
 - **SwiftUIGIF**: Used to display GIFs in SwiftUI.
+- **SwiftUILayoutGuides**: Used to bring UIKit layout guides such as .readableContentGuide to SwiftUI.
 
 ## Design System
 ### Colors
